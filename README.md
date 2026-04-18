@@ -277,4 +277,4 @@ Scope und Safe Harbor siehe [`SECURITY.md`](SECURITY.md).
 
 ## Lizenz
 
-[MIT](LICENSE). Historischer Go-Quellcode unter [`_legacy/`](_legacy/).
+[MIT](LICENSE).
