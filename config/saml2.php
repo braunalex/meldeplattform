@@ -40,6 +40,22 @@ return [
         'singleLogoutService' => [
             'url' => env('SAML2_IDP_SLO_URL'),
         ],
+        // PEM-encoded IdP signing certificate (without -----BEGIN/END----- markers
+        // also accepted). REQUIRED: without it, the SP cannot verify SAML response
+        // signatures and any attacker can forge assertions.
+        'x509cert' => env('SAML2_IDP_X509CERT', ''),
+    ],
+
+    // Security requirements enforced on inbound SAML responses.
+    // Mandatory in production; the SP refuses to boot without an IdP certificate.
+    'security' => [
+        'wantMessagesSigned' => true,
+        'wantAssertionsSigned' => true,
+        'wantAssertionsEncrypted' => false,
+        'wantNameIdEncrypted' => false,
+        'authnRequestsSigned' => false,
+        'signMetadata' => false,
+        'rejectUnsolicitedResponsesWithInResponseTo' => true,
     ],
 
     // Friendly names of SAML attributes we pull into the session.

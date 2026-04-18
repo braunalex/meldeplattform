@@ -30,6 +30,9 @@ class DevLoginController extends Controller
         $name = trim($request->string('name', '')->toString());
         $email = trim($request->string('email', '')->toString());
 
+        // Rotate session ID on privilege elevation (OWASP ASVS V3.2.1).
+        $request->session()->regenerate(true);
+
         $request->session()->put('saml_user', [
             'uid' => $uid,
             'name' => $name !== '' ? $name : $uid,
@@ -41,7 +44,8 @@ class DevLoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        $request->session()->forget('saml_user');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect('/');
     }

@@ -35,7 +35,7 @@ class SamlController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        $request->session()->forget('saml_user');
+        $this->destroySession($request);
 
         try {
             $auth = $this->newAuth();
@@ -55,9 +55,19 @@ class SamlController extends Controller
         } catch (\Throwable $e) {
             Log::info('SAML SLO failed', ['error' => $e->getMessage()]);
         }
-        $request->session()->forget('saml_user');
+        $this->destroySession($request);
 
         return redirect('/');
+    }
+
+    /**
+     * Fully invalidate the authenticated session on logout so no residual
+     * data (incl. CSRF token) outlives the user (OWASP ASVS V3.3, CWE-613).
+     */
+    private function destroySession(Request $request): void
+    {
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
     }
 
     public function acs(Request $request): RedirectResponse
@@ -83,6 +93,10 @@ class SamlController extends Controller
         $uid = $this->firstAttr($attrs, 'uid') ?? (string) $auth->getNameId();
         $name = $this->firstAttr($attrs, 'displayName') ?? '';
         $email = $this->firstAttr($attrs, 'mail') ?? '';
+
+        // Rotate the session ID on privilege elevation to defeat session fixation
+        // (OWASP ASVS V3.2.1, CWE-384). `regenerate(true)` destroys the old session.
+        $request->session()->regenerate(true);
 
         $request->session()->put('saml_user', [
             'uid' => $uid,
@@ -111,6 +125,16 @@ class SamlController extends Controller
         $idpCfg = (array) config('saml2.idp', []);
         /** @var array<string, mixed> $spCfg */
         $spCfg = (array) config('saml2.sp', []);
+        /** @var array<string, mixed> $securityCfg */
+        $securityCfg = (array) config('saml2.security', []);
+
+        $idpCert = self::str($idpCfg, 'x509cert');
+        if ($idpCert === '') {
+            // Without an IdP trust anchor, onelogin/php-saml accepts unsigned
+            // assertions and the whole SSO trust model collapses. Refuse to
+            // initialize rather than run insecurely.
+            abort(500, 'SAML not configured: SAML2_IDP_X509CERT is missing.');
+        }
 
         return new OneLoginAuth([
             'strict' => true,
@@ -139,7 +163,16 @@ class SamlController extends Controller
                     'url' => self::nestedStr($idpCfg, 'singleLogoutService', 'url'),
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
                 ],
-                'x509cert' => self::str($idpCfg, 'x509cert'),
+                'x509cert' => $idpCert,
+            ],
+            'security' => [
+                'wantMessagesSigned' => (bool) ($securityCfg['wantMessagesSigned'] ?? true),
+                'wantAssertionsSigned' => (bool) ($securityCfg['wantAssertionsSigned'] ?? true),
+                'wantAssertionsEncrypted' => (bool) ($securityCfg['wantAssertionsEncrypted'] ?? false),
+                'wantNameIdEncrypted' => (bool) ($securityCfg['wantNameIdEncrypted'] ?? false),
+                'authnRequestsSigned' => (bool) ($securityCfg['authnRequestsSigned'] ?? false),
+                'signMetadata' => (bool) ($securityCfg['signMetadata'] ?? false),
+                'rejectUnsolicitedResponsesWithInResponseTo' => (bool) ($securityCfg['rejectUnsolicitedResponsesWithInResponseTo'] ?? true),
             ],
         ]);
     }
