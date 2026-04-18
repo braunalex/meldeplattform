@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
          cacheDirectory=".phpunit.cache"
          displayDetailsOnTestsThatTriggerDeprecations="true"
@@ -20,19 +20,8 @@
             <directory>app</directory>
         </include>
     </source>
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_KEY" value="base64:AckfSECXIvnK5r28GVIWUAxmbBSjTsmF11IvCzpA1Oc="/>
-        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="MELDE_ADMIN_USERS" value="globaladmin"/>
-        <env name="MELDE_DEV_LOGIN_ENABLED" value="true"/>
-    </php>
+    <!-- Test-environment variables live in tests/bootstrap.php because they
+         must be written to $_SERVER to override the Docker-provided values
+         (Laravel's phpdotenv adapter chain reads $_SERVER before $_ENV, and
+         PHPUnit's <env force="true"> only updates $_ENV + putenv()). -->
 </phpunit>

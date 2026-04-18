@@ -24,15 +24,19 @@ class SecurityHeaders
         //   - self for static CSS/JS/fonts we ship under /css, /js
         //   - Google Fonts (fonts.googleapis.com + fonts.gstatic.com) for the
         //     Source Sans 3 webfont used by the TUM-style theme
-        //   - 'unsafe-inline' for the small inline <script> snippets inside
-        //     `reports.blade.php` and `new-topic.blade.php`; revisit if/when
-        //     those get moved to external files
+        //   - script-src is strict: no 'unsafe-inline', no 'unsafe-eval'. Page
+        //     data is passed to external JS through non-executable
+        //     <script type="application/json"> data islands, which browsers
+        //     never parse as JavaScript.
+        //   - 'unsafe-inline' remains in style-src for the handful of inline
+        //     style attributes in Blade templates.
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
             "img-src 'self' data:",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
-            "script-src 'self' 'unsafe-inline'",
+            "script-src 'self'",
+            "object-src 'none'",
             "connect-src 'self'",
             "frame-ancestors 'none'",
             "base-uri 'self'",
