@@ -194,7 +194,17 @@ hr {
     padding: clamp(1.25rem, 2.5vw, 2rem) 0;
 }
 .page-intro h1 { margin: 0 0 0.25em; }
-.page-intro p  { margin: 0; max-width: 70ch; color: var(--tum-text); }
+.page-intro p  {
+    margin: 0;
+    max-width: 70ch;
+    color: var(--tum-text);
+    /* German compounds ("zuständigen Stellen", "TUM-Systemen") can land
+       awkward break points at narrow widths. Allow automatic hyphenation
+       as a fallback, and prefer breaking between words first. */
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    overflow-wrap: break-word;
+}
 
 .crumb {
     display: inline-flex;

@@ -94,8 +94,8 @@ return new class extends Migration
                 'name_de' => 'IT Sicherheit',
                 'name_en' => 'IT Security',
                 'email' => 'it-sicherheit@tum.de',
-                'summary_de' => 'Melden Sie Schwachstellen und Sicherheitsvorfälle in IT-Systemen der Technischen Universität München – vertraulich und auf Wunsch anonym. Ihre Meldung wird vom TUM IT-Sicherheitsteam bearbeitet und nicht an Dritte weitergegeben. Bitte beschreiben Sie den Vorfall so konkret wie möglich, damit wir schnell reagieren können.',
-                'summary_en' => 'Report vulnerabilities and security incidents in IT systems of the Technical University of Munich – confidentially, and anonymously if you wish. Your report is handled by the TUM IT Security team and is not shared with third parties. Please describe the incident as specifically as possible so we can respond quickly.',
+                'summary_de' => 'Sie haben eine Schwachstelle oder ein Sicherheitsproblem in einem IT-System der TUM entdeckt? Dann freuen wir uns über Ihre Meldung – vertraulich und auf Wunsch anonym. Hinweisgebenden drohen keine Konsequenzen; wir sind dankbar für Ihre Unterstützung beim Schutz der TUM-Systeme.',
+                'summary_en' => 'Did you come across a vulnerability or security issue in a TUM IT system? We would love to hear about it – confidentially, and anonymously if you wish. Reporters face no repercussions; we genuinely appreciate your help keeping TUM systems secure.',
                 'fields' => [
                     [
                         'name_de' => 'Welche Art von Sicherheitsrisiko haben Sie entdeckt?',

@@ -6,8 +6,8 @@
             <h1>{{ __('select_topic_prompt') }}</h1>
             <p>
                 {{ $lang === 'de'
-                    ? 'Melden Sie Probleme anonym und sicher an die zuständigen Stellen der TUM. Ihre Meldung wird pseudonym verarbeitet, ohne Registrierung.'
-                    : 'Report issues anonymously and securely to the responsible teams at TUM. Your report is processed pseudonymously, without an account.' }}
+                    ? 'Ihre Meldung erreicht die zuständigen TUM-Teams – vertraulich, auf Wunsch anonym und ohne Registrierung.'
+                    : 'Your report reaches the responsible TUM teams – confidentially, anonymously if you wish, and without an account.' }}
             </p>
         </div>
     </section>
