@@ -13,7 +13,8 @@ parameters:
         - tests
 
     excludePaths:
-        - _legacy
+        # _legacy is only present in dev checkouts, not in CI.
+        - _legacy (?)
         - bootstrap/cache
         - storage
 
