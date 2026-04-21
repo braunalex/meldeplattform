@@ -50,7 +50,9 @@ if (! app()->environment('production') && (bool) config('meldeplattform.dev_logi
 Route::get('/saml/metadata', [SamlController::class, 'metadata']);
 Route::get('/saml/out', [SamlController::class, 'login'])->middleware('throttle:20,1');
 Route::get('/saml/logout', [SamlController::class, 'logout']);
-Route::post('/saml/slo', [SamlController::class, 'singleLogout']);
+// HTTP-Redirect binding uses GET; HTTP-POST binding uses POST. Accept both
+// so the SP works regardless of which binding the IdP picks at runtime.
+Route::match(['get', 'post'], '/saml/slo', [SamlController::class, 'singleLogout']);
 Route::post('/shib', [SamlController::class, 'acs'])->middleware('throttle:20,1');
 
 // Admin of a topic
